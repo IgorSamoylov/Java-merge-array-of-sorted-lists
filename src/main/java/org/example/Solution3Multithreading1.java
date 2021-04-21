@@ -10,7 +10,6 @@ public class Solution3Multithreading1 {
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
 
-
         int interval = 1;
         while (interval < lists.length) {
 
@@ -18,7 +17,7 @@ public class Solution3Multithreading1 {
             Future<ListNode>[] futures = new Future[lists.length];
 
             int n = 0;
-            for (int i = 0; i + interval < lists.length; i = i + interval * 2) {
+            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
                 Callable<ListNode> callable = new Merge2Lists2(lists[i], lists[i + interval]);
 
                 futures[i] = executorService.submit(callable);
@@ -30,33 +29,28 @@ public class Solution3Multithreading1 {
             do {
                 complete = 0;
                 for (Future<ListNode> future : futures) {
-                    if (future != null && future.isDone()) complete += 1;
+                    if (future != null && future.isDone()) complete++;
                 }
             }
             while (complete == n);
 
-
-            for (int i = 0; i + interval < lists.length; i = i + interval * 2) {
+            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
 
                 try {
                     if (futures[i] != null) lists[i] = futures[i].get();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-
             }
 
             executorService.shutdown();
 
-
-            interval *= 2;
+            interval <<= 1;
         }
-
         return lists[0];
     }
-
-
 }
+
 
 class Merge2Lists2 implements Callable<ListNode> {
 
@@ -86,7 +80,6 @@ class Merge2Lists2 implements Callable<ListNode> {
                 second = second.next;
             }
         }
-
         if (first == null) tmp.next = second;
         if (second == null) tmp.next = first;
 

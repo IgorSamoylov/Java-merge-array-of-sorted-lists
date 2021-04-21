@@ -17,7 +17,7 @@ public class App {
         ListNode outputList = solution.mergeKLists(TestArray);
         long finishTime = System.nanoTime();
         long result = finishTime - startTime;
-        System.out.println("Solution with the primitive array of Future : " + result);
+        System.out.println("Solution with the primitive array of Future : " + result + " nanoseconds");
         printList(outputList);
 
         for (int i = 0; i < 16; ++i) {
@@ -31,7 +31,7 @@ public class App {
         outputList = solution0.mergeKLists(TestArray);
         finishTime = System.nanoTime();
         result = finishTime - startTime;
-        System.out.println("Solution with the ArrayList of Future: " + result);
+        System.out.println("Solution with the ArrayList of Future: " + result + " nanoseconds");
         printList(outputList);
 
     }

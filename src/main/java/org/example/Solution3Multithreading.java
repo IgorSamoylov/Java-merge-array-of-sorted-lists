@@ -11,52 +11,47 @@ public class Solution3Multithreading {
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
 
-
         int interval = 1;
         while (interval < lists.length) {
 
             ExecutorService executorService = Executors.newFixedThreadPool(4);
             ArrayList<Future<ListNode>> futures = new ArrayList<>();
 
-
-            for (int i = 0; i + interval < lists.length; i = i + interval * 2) {
+            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) { // Bit shift multiplies the value by two
                 Callable<ListNode> callable = new Merge2Lists(lists[i], lists[i + interval]);
 
                 futures.add(executorService.submit(callable));
-                //lists[i] = merge2Lists(lists[i], lists[i + interval]);
             }
 
             int complete;
             do {
                 complete = 0;
-                for (int i = 0; i < futures.size(); ++i) {
-                    if (futures.get(i).isDone()) complete += 1;
+                for (Future<ListNode> future : futures) {
+                    if (future.isDone()) complete++;
                 }
             }
             while (complete == futures.size());
 
             int n = 0;
-            for (int i = 0; i + interval < lists.length; i = i + interval * 2) {
+            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
 
                 try {
                     lists[i] = futures.get(n).get();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                n += 1;
+                n++;
             }
-
 
             executorService.shutdown();
 
-            interval *= 2;
+            interval <<= 1;// Bit shift multiplies the value by two
         }
 
         return lists[0];
     }
-
-
 }
+
 
 class Merge2Lists implements Callable<ListNode> {
 

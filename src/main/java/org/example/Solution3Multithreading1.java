@@ -1,7 +1,9 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Solution3Multithreading1 {
 
@@ -9,9 +11,8 @@ public class Solution3Multithreading1 {
         if (lists.length == 0) return null;
 
 
-
         int interval = 1;
-        while(interval < lists.length) {
+        while (interval < lists.length) {
 
             ExecutorService executorService = Executors.newFixedThreadPool(4);
             Future<ListNode>[] futures = new Future[lists.length];
@@ -25,7 +26,6 @@ public class Solution3Multithreading1 {
             }
 
 
-
             int complete;
             do {
                 complete = 0;
@@ -33,14 +33,16 @@ public class Solution3Multithreading1 {
                     if (future != null && future.isDone()) complete += 1;
                 }
             }
-            while(complete == n);
+            while (complete == n);
 
 
-            for (int i = 0; i + interval < lists.length; i = i + interval * 2){
+            for (int i = 0; i + interval < lists.length; i = i + interval * 2) {
 
                 try {
-                    if(futures[i] != null) lists[i] = futures[i].get();
-                } catch (Exception ex) {ex.printStackTrace();}
+                    if (futures[i] != null) lists[i] = futures[i].get();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
 
             }
 

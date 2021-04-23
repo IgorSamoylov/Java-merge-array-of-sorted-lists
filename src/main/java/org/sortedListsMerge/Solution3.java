@@ -1,7 +1,7 @@
 package org.sortedListsMerge;
 
 
-public class Solution3 {
+public class Solution3 implements TestSolution {
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;

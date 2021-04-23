@@ -4,6 +4,8 @@ package org.sortedListsMerge;
 public class App {
     public static void main(String... args) {
 
+        Test(new Solution(), "Simple bruteforce solution with JAVA integrated sort methods");
+        Test(new Solution3(), "Advanced one-thread solution with divide and conquer method");
         Test(new SolutionFixedThreadArray(), "Fixed Thread Array");
         Test(new SolutionMultithreading(), "ArrayList of Threads");
         Test(new SolutionPhaser(), "Runnable and Phaser class synchronization");

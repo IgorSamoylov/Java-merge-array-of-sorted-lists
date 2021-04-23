@@ -1,4 +1,4 @@
-package org.example;
+package org.sortedListsMerge;
 
 public class ListNode {
     int val;

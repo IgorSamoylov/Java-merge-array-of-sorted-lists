@@ -1,12 +1,16 @@
-package org.example;
+/*
+This class merges sorted linked lists, which given in a array of them firsts Nodes.
+This class uses fixed Executors thread pool and fixed array of threads for multithreading processing.
+ */
 
-import java.util.ArrayList;
+package org.sortedListsMerge;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class Solution3Multithreading {
+public class SolutionFixedThreadArray implements TestSolution {
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
@@ -15,49 +19,49 @@ public class Solution3Multithreading {
         while (interval < lists.length) {
 
             ExecutorService executorService = Executors.newFixedThreadPool(4);
-            ArrayList<Future<ListNode>> futures = new ArrayList<>();
+            Future<ListNode>[] futures = new Future[lists.length];
 
-            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) { // Bit shift multiplies the value by two
-                Callable<ListNode> callable = new Merge2Lists(lists[i], lists[i + interval]);
+            int n = 0;
+            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
+                Callable<ListNode> callable = new Merge2Lists2(lists[i], lists[i + interval]);
 
-                futures.add(executorService.submit(callable));
+                futures[i] = executorService.submit(callable);
+                n++;
             }
+
 
             int complete;
             do {
                 complete = 0;
                 for (Future<ListNode> future : futures) {
-                    if (future.isDone()) complete++;
+                    if (future != null && future.isDone()) complete++;
                 }
             }
-            while (complete == futures.size());
+            while (complete == n);
 
-            int n = 0;
             for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
 
                 try {
-                    lists[i] = futures.get(n).get();
+                    if (futures[i] != null) lists[i] = futures[i].get();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                n++;
             }
 
             executorService.shutdown();
 
-            interval <<= 1;// Bit shift multiplies the value by two
+            interval <<= 1;
         }
-
         return lists[0];
     }
 }
 
 
-class Merge2Lists implements Callable<ListNode> {
+class Merge2Lists2 implements Callable<ListNode> {
 
     private ListNode first, second;
 
-    Merge2Lists(ListNode first, ListNode second) {
+    Merge2Lists2(ListNode first, ListNode second) {
         this.first = first;
         this.second = second;
     }
@@ -73,18 +77,18 @@ class Merge2Lists implements Callable<ListNode> {
 
             if (first.val < second.val) {
                 tmp.next = first;
-                tmp = tmp.next;
+                tmp = first;
                 first = first.next;
             } else {
                 tmp.next = second;
-                tmp = tmp.next;
+                tmp = second;
                 second = second.next;
             }
         }
-
         if (first == null) tmp.next = second;
         if (second == null) tmp.next = first;
 
         return output.next;
     }
 }
+

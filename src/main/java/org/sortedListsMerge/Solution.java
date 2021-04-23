@@ -1,4 +1,4 @@
-package org.example;
+package org.sortedListsMerge;
 
 import java.util.Collections;
 import java.util.Comparator;

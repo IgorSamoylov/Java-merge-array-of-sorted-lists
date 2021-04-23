@@ -1,4 +1,4 @@
-package org.example;
+package org.sortedListsMerge;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -20,13 +20,28 @@ class SolutionTest {
     }
 
     @Test
-    public void Test1() {
-        Solution3Multithreading solution0 = new Solution3Multithreading();
-        outputList = solution0.mergeKLists(TestArray);
+    public void testMultithreading() {
+        tester(new SolutionMultithreading());
+    }
+    @Test
+    public void testFixedThreadArray() {
+        tester(new SolutionFixedThreadArray());
+    }
+    @Test
+    public void testPhaser() {
+        tester(new SolutionPhaser());
+    }
+
+
+    public void tester(TestSolution solution) {
+
+        outputList = solution.mergeKLists(TestArray);
         Assertions.assertNotNull(outputList);
         Assertions.assertEquals(totalNodes, countNodes(outputList));
 
     }
+
+
 
     private int countNodes(ListNode ln) {
         int count = 0;

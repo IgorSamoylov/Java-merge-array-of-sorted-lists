@@ -1,5 +1,6 @@
 package org.sortedListsMerge;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,11 +34,12 @@ class SolutionTest {
     }
 
 
-    public void tester(TestSolution solution) {
+    private void tester(@NotNull TestSolution solution) {
 
         outputList = solution.mergeKLists(TestArray);
         Assertions.assertNotNull(outputList);
         Assertions.assertEquals(totalNodes, countNodes(outputList));
+        Assertions.assertTrue(testAscendingOrder(outputList));
 
     }
 
@@ -51,6 +53,14 @@ class SolutionTest {
         }
 
         return count;
+    }
+
+    private boolean testAscendingOrder(@NotNull ListNode ln) {
+        while(ln.next != null) {
+            if (!(ln.val <= ln.next.val)) return false;
+            ln = ln.next;
+        }
+        return true;
     }
 
     @AfterAll

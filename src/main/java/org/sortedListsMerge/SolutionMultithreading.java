@@ -13,8 +13,8 @@ import java.util.concurrent.Future;
 
 public class SolutionMultithreading implements TestSolution {
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(4);
-    private ArrayList<Future<ListNode>> futures = new ArrayList<>();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private final ArrayList<Future<ListNode>> futures = new ArrayList<>();
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;

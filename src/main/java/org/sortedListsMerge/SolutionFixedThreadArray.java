@@ -11,15 +11,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class SolutionFixedThreadArray implements TestSolution {
+    private Future<ListNode>[] futures;
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
+        futures = new Future[lists.length];
 
         int interval = 1;
         while (interval < lists.length) {
 
             ExecutorService executorService = Executors.newFixedThreadPool(4);
-            Future<ListNode>[] futures = new Future[lists.length];
+
 
             int n = 0;
             for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
@@ -33,7 +35,7 @@ public class SolutionFixedThreadArray implements TestSolution {
             int complete;
             do {
                 complete = 0;
-                for (Future<ListNode> future : futures) {
+                for (Future future : futures) {
                     if (future != null && future.isDone()) complete++;
                 }
             }
@@ -42,7 +44,7 @@ public class SolutionFixedThreadArray implements TestSolution {
             for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
 
                 try {
-                    if (futures[i] != null) lists[i] = futures[i].get();
+                    if (futures[i] != null) lists[i] = (ListNode) futures[i].get();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

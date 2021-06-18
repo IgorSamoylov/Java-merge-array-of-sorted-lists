@@ -24,10 +24,7 @@ class SolutionTest {
     public void testMultithreading() {
         tester(new SolutionMultithreading());
     }
-    @Test
-    public void testFixedThreadArray() {
-        tester(new SolutionFixedThreadArray());
-    }
+
     @Test
     public void testPhaser() {
         tester(new SolutionPhaser());

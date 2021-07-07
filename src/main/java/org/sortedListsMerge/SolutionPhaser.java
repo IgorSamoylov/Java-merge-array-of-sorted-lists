@@ -25,8 +25,7 @@ public class SolutionPhaser implements TestSolution{
             phaser = new Phaser(1);
             // Sending merge tasks of a contiguous lists pairs
             for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
-                Runnable task = new Merge2ListsPh(i, lists[i], lists[i + interval], phaser);
-                executorService.submit(task);
+                executorService.submit(new Merge2ListsPh(i, lists[i], lists[i + interval], phaser));
             }
             // Waiting on the phaser object
             phaser.arriveAndAwaitAdvance();

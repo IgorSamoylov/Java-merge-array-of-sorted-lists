@@ -19,6 +19,11 @@ class SolutionTest {
             totalNodes += countNodes(TestArray[i]);
         }
     }
+    @Test
+    public void simpleBrutforce() { tester(new Solution());}
+
+    @Test
+    public void testDivideAndConquer() { tester(new SolutionDivideAndConquer());}
 
     @Test
     public void testMultithreading() {

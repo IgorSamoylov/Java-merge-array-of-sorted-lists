@@ -5,8 +5,8 @@ public class App {
     public static void main(String... args) {
 
         Test(new Solution(), "Simple bruteforce solution with JAVA integrated sort methods");
-        Test(new Solution3(), "Advanced one-thread solution with divide and conquer method");
-        Test(new SolutionMultithreading(), "ArrayList of Threads");
+        Test(new SolutionDivideAndConquer(), "Advanced one-thread solution with divide and conquer method");
+        Test(new SolutionMultithreading(), "Array of Futures");
         Test(new SolutionPhaser(), "Runnable and Phaser class synchronization");
     }
 
@@ -48,7 +48,7 @@ public class App {
         long finishTime = System.nanoTime();
         long result = (finishTime - startTime) / 1000_000;
         System.out.println(name + " " + result + " milliseconds");
-        printList(outputList);
+        //printList(outputList);
 
     }
 }

@@ -10,37 +10,36 @@ public class SolutionPhaser implements TestSolution{
 
     public static ListNode[] runnables;
     private Phaser phaser;
+    private final int THREADS_NUMBER = 4;
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
 
         runnables = lists;
+        ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
 
         int interval = 1;
 
         while (interval < lists.length) {
 
             phaser = new Phaser(1);
-
-            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) { // Bit shift multiplies the value by two
-                Runnable runnable = new Merge2ListsPh(i, lists[i], lists[i + interval], phaser);
-            // May creates too many threads if input array is long and causes heap memory overflow error
-                Thread thread = new Thread(runnable);
-
-                thread.start();
+            // Sending merge tasks of a contiguous lists pairs
+            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
+                Runnable task = new Merge2ListsPh(i, lists[i], lists[i + interval], phaser);
+                executorService.submit(task);
             }
-
+            // Waiting on the phaser object
             phaser.arriveAndAwaitAdvance();
             phaser.arriveAndDeregister();
 
             interval <<= 1;
         }
-
+        executorService.shutdown();
         return lists[0];
     }
 }
 
-
+// Merges two sorted linked lists in a one
 class Merge2ListsPh implements Runnable {
 
     private int i;
@@ -59,7 +58,6 @@ class Merge2ListsPh implements Runnable {
 
     @Override
     public void run() {
-        //System.out.println(Thread.currentThread().getName() + " started!");
 
         ListNode tmp = new ListNode(0);
         ListNode output = tmp;
@@ -84,7 +82,7 @@ class Merge2ListsPh implements Runnable {
         if (second == null) tmp.next = first;
 
         SolutionPhaser.runnables[i] = output.next;
-        int arrived = phaser.arrive();
-        //System.out.println(Thread.currentThread().getName() + " is arrived!" + arrived);
+        // Calls to the phaser object about a completed task
+        phaser.arrive();
     }
 }

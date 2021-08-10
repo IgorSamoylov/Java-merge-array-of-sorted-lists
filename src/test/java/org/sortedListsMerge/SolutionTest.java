@@ -37,7 +37,7 @@ class SolutionTest {
     }
 
 
-    private void tester(@NotNull TestSolution solution) {
+    private void tester(TestSolution solution) {
 
         outputList = solution.mergeKLists(TestArray);
         Assertions.assertNotNull(outputList);
@@ -56,7 +56,7 @@ class SolutionTest {
     }
 
     // Tests that nodes in linked list are ascending ordered
-    private boolean testAscendingOrder(@NotNull ListNode ln) {
+    private boolean testAscendingOrder(ListNode ln) {
         while(ln.next != null) {
             if (!(ln.val <= ln.next.val)) return false;
             ln = ln.next;
@@ -66,7 +66,7 @@ class SolutionTest {
 
     // Just print last output
     @AfterAll
-    static void tearDown() {
+    static void printResult() {
         App.printList(outputList);
     }
 }

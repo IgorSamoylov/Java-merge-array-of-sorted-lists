@@ -11,7 +11,7 @@ import java.util.List;
         public ListNode mergeKLists(ListNode[] lists) {
             if(lists.length == 0) return null;
 
-            for (ListNode list : lists) {
+            for (ListNode list: lists) {
 
                 ListNode currentListNode = list;
                 while (currentListNode != null) {

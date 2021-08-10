@@ -5,45 +5,47 @@ This class uses fixed Executors thread pool and ArrayList of Futures for multith
 
 package org.sortedListsMerge;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SolutionMultithreading implements TestSolution {
 
     private final int THREADS_NUMBER = 4;
     private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
-    private Future<ListNode>[] futures;
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
-        futures = new Future[lists.length];
+
+        Queue<Future<ListNode>> futures = new ArrayDeque<>();
 
         int interval = 1;
         while (interval < lists.length) {
             // Creating the merge tasks of a contiguous lists pairs
-            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) { // Bit shift multiplies the value by two
-                futures[i] = executorService.submit(new Merge2Lists(lists[i], lists[i + interval]));
+            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) { // Bit shift multiplies the value by two in each iteration
+                futures.add(executorService.submit(new Merge2Lists(lists[i], lists[i + interval])));
             }
 
-            // Consistently checking all sent futures for being completed
+            // Consistently checking for all sent futures for being completed...
             int complete;
             do {
                 complete = 0;
-                for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
-                    if (futures[i].isDone()) complete++;
+                for (var future : futures) {
+                    if (future.isDone()) complete++;
                 }
-            } while (complete == futures.length);
+            } while (complete == futures.size());
 
-            // Retrieving all of sent futures
-            try {
-                for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
-                        lists[i] = futures[i].get(); }
-            } catch (Exception ex) { ex.printStackTrace(); }
+            // ...and retrieving it with preserving order
+            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
+                try {
+                    lists[i] = futures.poll().get();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
             interval <<= 1;
         }
         executorService.shutdown();

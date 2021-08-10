@@ -8,19 +8,20 @@ import org.junit.jupiter.api.Test;
 
 class SolutionTest {
     private static ListNode outputList;
-    private ListNode[] TestArray = new ListNode[16];
+    private static final int numberLists = 32;
+    private ListNode[] TestArray = new ListNode[numberLists];
     private int totalNodes = 0;
 
 
     SolutionTest() {
 
-        for (int i = 0; i < 16; ++i) {
+        for (int i = 0; i < numberLists; ++i) {
             TestArray[i] = App.createList();
             totalNodes += countNodes(TestArray[i]);
         }
     }
     @Test
-    public void simpleBrutforce() { tester(new Solution());}
+    public void simpleBruteforce() { tester(new Solution());}
 
     @Test
     public void testDivideAndConquer() { tester(new SolutionDivideAndConquer());}
@@ -42,21 +43,19 @@ class SolutionTest {
         Assertions.assertNotNull(outputList);
         Assertions.assertEquals(totalNodes, countNodes(outputList));
         Assertions.assertTrue(testAscendingOrder(outputList));
-
     }
 
-
-
+    // Counts the total number of nodes in a linked list
     private int countNodes(ListNode ln) {
         int count = 0;
         while(ln != null) {
             count++;
             ln = ln.next;
         }
-
         return count;
     }
 
+    // Tests that nodes in linked list are ascending ordered
     private boolean testAscendingOrder(@NotNull ListNode ln) {
         while(ln.next != null) {
             if (!(ln.val <= ln.next.val)) return false;
@@ -65,6 +64,7 @@ class SolutionTest {
         return true;
     }
 
+    // Just print last output
     @AfterAll
     static void tearDown() {
         App.printList(outputList);

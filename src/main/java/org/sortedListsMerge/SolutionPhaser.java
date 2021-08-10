@@ -19,7 +19,6 @@ public class SolutionPhaser implements TestSolution{
         ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
 
         int interval = 1;
-
         while (interval < lists.length) {
 
             phaser = new Phaser(1);
@@ -41,9 +40,9 @@ public class SolutionPhaser implements TestSolution{
 // Merges two sorted linked lists in a one
 class Merge2ListsPh implements Runnable {
 
-    private int i;
+    private final int i;
     private ListNode first, second;
-    private Phaser phaser;
+    private final Phaser phaser;
 
 
     Merge2ListsPh(int i, ListNode first, ListNode second, Phaser phaser) {

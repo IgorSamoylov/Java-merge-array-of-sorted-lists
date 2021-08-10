@@ -1,6 +1,6 @@
 /*
 This class merges sorted linked lists, which given in a array of them firsts Nodes.
-This class uses fixed Executors thread pool and ArrayList of Futures for multithreading processing.
+This class uses fixed Executors thread pool and ArrayDeque of Futures for multithreading processing.
  */
 
 package org.sortedListsMerge;

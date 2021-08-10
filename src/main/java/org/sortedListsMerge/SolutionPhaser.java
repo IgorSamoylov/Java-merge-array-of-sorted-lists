@@ -1,6 +1,6 @@
 /*
 This class merges sorted linked lists, which given in a array of them firsts Nodes.
-This class uses Runnable methods and synchronization provided by JAVA Phaser class.
+This class uses Runnable task class and synchronization provided by JAVA Phaser class.
  */
 package org.sortedListsMerge;
 

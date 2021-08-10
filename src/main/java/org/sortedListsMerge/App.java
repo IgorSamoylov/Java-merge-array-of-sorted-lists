@@ -2,12 +2,17 @@ package org.sortedListsMerge;
 
 
 public class App {
+
+    private static final int LISTS_NUMBER = 320;
+    private static final int LISTS_MAX_LENGTH = 1000;
+    private static final int LISTS_MAX_VALUE = 100;
+
     public static void main(String... args) {
 
-        Test(new Solution(), "Simple bruteforce solution with JAVA integrated sort methods", 32);
-        Test(new SolutionDivideAndConquer(), "Advanced one-thread solution with divide and conquer method", 32);
-        Test(new SolutionMultithreading(), "Queue of Futures", 32);
-        Test(new SolutionPhaser(), "Runnable and Phaser class synchronization", 32);
+        Test(new Solution(), "Simple bruteforce solution with JAVA integrated sort methods", LISTS_NUMBER);
+        Test(new SolutionDivideAndConquer(), "Advanced one-thread solution with divide and conquer method", LISTS_NUMBER);
+        Test(new SolutionMultithreading(), "Queue of Futures", LISTS_NUMBER);
+        Test(new SolutionPhaser(), "Runnable and Phaser class synchronization", LISTS_NUMBER);
     }
 
     // Creates linked list of ListNodes with random size
@@ -15,21 +20,18 @@ public class App {
         ListNode currentNode = new ListNode();
         ListNode firstNode = currentNode;
         ListNode secondNode;
-        int randomLength = (int) (Math.random() * 100);
+        int randomLength = (int) (Math.random() * LISTS_MAX_LENGTH);
         int currentMaxValue = 0;
         for (int i = 0; i < randomLength; ++i) {
             secondNode = new ListNode();
 
-            currentMaxValue += (int) (Math.random() * 100);
+            currentMaxValue += (int) (Math.random() * LISTS_MAX_VALUE);
             currentNode.val = currentMaxValue;
 
             currentNode.next = secondNode;
             currentNode = secondNode;
         }
         currentNode.val = currentMaxValue + 5; // Set max value for the last node
-
-        //System.out.println("New LIST");
-        //printList(firstNode);
 
         return firstNode;
     }

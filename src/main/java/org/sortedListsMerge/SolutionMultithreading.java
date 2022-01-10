@@ -24,12 +24,12 @@ public class SolutionMultithreading implements TestSolution {
 
         int interval = 1;
         while (interval < lists.length) {
-            // Creating the merge tasks of a contiguous lists pairs
+            // #1. Creating the merge tasks of a contiguous lists pairs
             for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) { // Bit shift multiplies the value by two in each iteration
                 futures.add(executorService.submit(new Merge2Lists(lists[i], lists[i + interval])));
             }
 
-            // Consistently checking for all sent futures for being completed...
+            // #2. Consistently checking for all sent futures for being completed...
             int complete;
             do {
                 complete = 0;
@@ -38,7 +38,7 @@ public class SolutionMultithreading implements TestSolution {
                 }
             } while (complete == futures.size());
 
-            // ...and retrieving it with preserving order
+            // #3. ...and retrieving it with preserving order
             for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
                 try {
                     lists[i] = futures.poll().get();

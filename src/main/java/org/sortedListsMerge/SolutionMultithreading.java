@@ -6,11 +6,10 @@ This class uses fixed Executors thread pool and ArrayDeque of Futures for multit
 package org.sortedListsMerge;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class SolutionMultithreading implements TestSolution {
 
@@ -20,33 +19,29 @@ public class SolutionMultithreading implements TestSolution {
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
 
-        Queue<Future<ListNode>> futures = new ArrayDeque<>();
+        List<Future<ListNode>> futures;
+        List<Merge2Lists> tasks = new ArrayList<>(lists.length);
+        try {
+            int interval = 1;
+            while (interval < lists.length) {
 
-        int interval = 1;
-        while (interval < lists.length) {
-            // #1. Creating the merge tasks of a contiguous lists pairs
-            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) { // Bit shift multiplies the value by two in each iteration
-                futures.add(executorService.submit(new Merge2Lists(lists[i], lists[i + interval])));
-            }
-
-            // #2. Consistently checking for all sent futures for being completed...
-            int complete;
-            do {
-                complete = 0;
-                for (var future : futures) {
-                    if (future.isDone()) complete++;
+                // Creating the merge tasks of a contiguous lists pairs
+                for (int i = 0; i + interval < lists.length; i = i + (interval * 2)) {
+                    tasks.set(i, new Merge2Lists(lists[i], lists[i + interval]));
                 }
-            } while (complete == futures.size());
 
-            // #3. ...and retrieving it with preserving order
-            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
-                try {
-                    lists[i] = futures.poll().get();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                futures = executorService.invokeAll(tasks);
+                //tasks.clear();
+
+                // Retrieving heads of sorted linked lists with preserving order
+                int count = 0;
+                for (int i = 0; i + interval < lists.length; i = i + (interval * 2))
+                    lists[i] = futures.get(i).get();
+
+                interval *= 2;
             }
-            interval <<= 1;
+        } catch (InterruptedException | ExecutionException ex) {
+            ex.printStackTrace();
         }
         executorService.shutdown();
         return lists[0];

@@ -38,10 +38,10 @@ public class App {
 
     public static void printList(ListNode inputListNode) {
         while (inputListNode != null) {
-            System.out.println(inputListNode.val);
+            System.out.print(inputListNode.val + " ");
             inputListNode = inputListNode.next;
         }
-
+        System.out.println();
     }
 
     private static void Test(TestSolution solution, String name, int listsNumber) {

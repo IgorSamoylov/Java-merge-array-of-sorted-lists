@@ -5,11 +5,11 @@ This class uses fixed Executors thread pool and ArrayDeque of Futures for multit
 
 package org.sortedListsMerge;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Objects;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class SolutionMultithreading implements TestSolution {
 
@@ -21,29 +21,30 @@ public class SolutionMultithreading implements TestSolution {
 
         List<Future<ListNode>> futures;
         List<Merge2Lists> tasks = new ArrayList<>(lists.length);
+
         try {
             int interval = 1;
             while (interval < lists.length) {
-
                 // Creating the merge tasks of a contiguous lists pairs
-                for (int i = 0; i + interval < lists.length; i = i + (interval * 2)) {
+                for (int i = 0; i + interval < lists.length; i = i + interval * 2) {
+                    // TODO Whats wrong?
                     tasks.set(i, new Merge2Lists(lists[i], lists[i + interval]));
                 }
-
-                futures = executorService.invokeAll(tasks);
-                //tasks.clear();
-
+                // TODO How to clear correctly?
+                futures = executorService.invokeAll(tasks.stream().filter(Objects::nonNull).collect(Collectors.toList()));
+                tasks.clear();
                 // Retrieving heads of sorted linked lists with preserving order
-                int count = 0;
-                for (int i = 0; i + interval < lists.length; i = i + (interval * 2))
+                for (int i = 0; i + interval < lists.length; i = i + interval * 2)
                     lists[i] = futures.get(i).get();
 
                 interval *= 2;
             }
         } catch (InterruptedException | ExecutionException ex) {
             ex.printStackTrace();
+        } finally {
+            executorService.shutdown();
         }
-        executorService.shutdown();
+
         return lists[0];
     }
 }
@@ -63,7 +64,7 @@ class Merge2Lists implements Callable<ListNode> {
         if (first == null && second == null) return null;
 
         ListNode tmp = new ListNode(0);
-        ListNode output = tmp;
+        ListNode result = tmp;
 
         while (first != null && second != null) {
 
@@ -83,6 +84,6 @@ class Merge2Lists implements Callable<ListNode> {
         if (first == null) tmp.next = second;
         if (second == null) tmp.next = first;
 
-        return output.next;
+        return result.next;
     }
 }

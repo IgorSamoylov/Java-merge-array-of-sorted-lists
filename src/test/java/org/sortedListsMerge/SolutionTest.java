@@ -1,6 +1,5 @@
 package org.sortedListsMerge;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ class SolutionTest {
     SolutionTest() {
 
         for (int i = 0; i < numberLists; ++i) {
-            TestArray[i] = App.createList();
+            TestArray[i] = Util.createList();
             totalNodes += countNodes(TestArray[i]);
         }
     }
@@ -67,6 +66,6 @@ class SolutionTest {
     // Just print last output
     @AfterAll
     static void printResult() {
-        App.printList(outputList);
+        Util.printList(outputList);
     }
 }

@@ -4,34 +4,31 @@ This class uses Runnable task class and synchronization provided by JAVA Phaser 
  */
 package org.sortedListsMerge;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Phaser;
 
 public class SolutionPhaser implements TestSolution{
-
-    public static ListNode[] runnables;
-    private Phaser phaser;
     private final int THREADS_NUMBER = 4;
+    private ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
+    private Phaser phaser = new Phaser(1);
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
 
-        runnables = lists;
-        ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
-
         int interval = 1;
         while (interval < lists.length) {
-
-            phaser = new Phaser(1);
             // Sending merge tasks of a contiguous lists pairs
-            for (int i = 0; i + interval < lists.length; i = i + (interval << 1)) {
-                executorService.submit(new Merge2ListsPh(i, lists[i], lists[i + interval], phaser));
+            for (int i = 0; i + interval < lists.length; i = i + interval * 2) {
+                executorService.submit(new Merge2ListsPh(lists, i,i + interval, phaser));
             }
-            // Waiting on the phaser object
+            // Waiting on phaser object
             phaser.arriveAndAwaitAdvance();
-            phaser.arriveAndDeregister();
 
-            interval <<= 1;
+            interval *= 2;
         }
+
+        phaser.arriveAndDeregister();
         executorService.shutdown();
         return lists[0];
     }
@@ -40,15 +37,17 @@ public class SolutionPhaser implements TestSolution{
 // Merges two sorted linked lists in a one
 class Merge2ListsPh implements Runnable {
 
-    private final int i;
-    private ListNode first, second;
+    private final ListNode[] lists;
+    private final int targetIndex;
+    private ListNode firstNode, secondNode;
     private final Phaser phaser;
 
 
-    Merge2ListsPh(int i, ListNode first, ListNode second, Phaser phaser) {
-        this.i = i;
-        this.first = first;
-        this.second = second;
+    Merge2ListsPh(ListNode[] lists, int first, int second, Phaser phaser) {
+        this.lists = lists;
+        this.targetIndex = first;
+        this.firstNode = lists[first];
+        this.secondNode = lists[second];
         this.phaser = phaser;
 
         phaser.register();
@@ -60,27 +59,25 @@ class Merge2ListsPh implements Runnable {
         ListNode tmp = new ListNode(0);
         ListNode output = tmp;
 
-        while (first != null && second != null) {
-
-            if (first.val < second.val) {
-                tmp.next = first;
-                tmp = first;
-
-                first = first.next; // Iterate one step throw the first list
-
+        // Merging
+        while (firstNode != null && secondNode != null) {
+            if (firstNode.val < secondNode.val) {
+                tmp.next = firstNode;
+                tmp = firstNode;
+                firstNode = firstNode.next; // Iterate one step throw the first list
             } else {
-                tmp.next = second;
-                tmp = second;
-
-                second = second.next; //Iterate one step throw the second list
+                tmp.next = secondNode;
+                tmp = secondNode;
+                secondNode = secondNode.next; //Iterate one step throw the second list
             }
         }
+        // Appending tails
+        if (firstNode == null) tmp.next = secondNode;
+        if (secondNode == null) tmp.next = firstNode;
 
-        if (first == null) tmp.next = second;
-        if (second == null) tmp.next = first;
+        lists[targetIndex] = output.next;
 
-        SolutionPhaser.runnables[i] = output.next;
         // Calls to the phaser object about a completed task
-        phaser.arrive();
+        phaser.arriveAndDeregister();
     }
 }

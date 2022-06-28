@@ -5,11 +5,9 @@ This class uses fixed Executors thread pool and ArrayDeque of Futures for multit
 
 package org.sortedListsMerge;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 public class SolutionMultithreading implements TestSolution {
 
@@ -19,23 +17,23 @@ public class SolutionMultithreading implements TestSolution {
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
 
-        List<Future<ListNode>> futures;
-        List<Merge2Lists> tasks = new ArrayList<>(lists.length);
+        Deque<Future<ListNode>> futures = new ArrayDeque<>();
+        Merge2Lists[] tasks = new Merge2Lists[lists.length];
 
         try {
             int interval = 1;
             while (interval < lists.length) {
                 // Creating the merge tasks of a contiguous lists pairs
                 for (int i = 0; i + interval < lists.length; i = i + interval * 2) {
-                    // TODO Whats wrong?
-                    tasks.set(i, new Merge2Lists(lists[i], lists[i + interval]));
+                    futures.add(executorService.submit(new Merge2Lists(lists[i], lists[i + interval])));
                 }
-                // TODO How to clear correctly?
-                futures = executorService.invokeAll(tasks.stream().filter(Objects::nonNull).collect(Collectors.toList()));
-                tasks.clear();
+                // TODO
+                while(true) {
+                    futures.
+                }
                 // Retrieving heads of sorted linked lists with preserving order
                 for (int i = 0; i + interval < lists.length; i = i + interval * 2)
-                    lists[i] = futures.get(i).get();
+                    lists[i] = futures.pollFirst().get();
 
                 interval *= 2;
             }

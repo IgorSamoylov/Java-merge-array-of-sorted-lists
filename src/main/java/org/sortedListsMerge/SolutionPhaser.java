@@ -10,8 +10,8 @@ import java.util.concurrent.Phaser;
 
 public class SolutionPhaser implements TestSolution{
     private final int THREADS_NUMBER = 4;
-    private ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
-    private Phaser phaser = new Phaser(1);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_NUMBER);
+    private final Phaser phaser = new Phaser(1);
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;

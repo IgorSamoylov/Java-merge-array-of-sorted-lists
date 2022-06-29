@@ -6,12 +6,12 @@ public class Util {
         ListNode currentNode = new ListNode();
         ListNode firstNode = currentNode;
         ListNode secondNode;
-        int randomLength = (int) (Math.random() * Constants.LISTS_MAX_LENGTH);
+        int randomLength = (int) (Math.random() * Settings.LISTS_MAX_LENGTH);
         int currentMaxValue = 0;
         for (int i = 0; i < randomLength; ++i) {
             secondNode = new ListNode();
 
-            currentMaxValue += (int) (Math.random() * Constants.LISTS_MAX_VALUE);
+            currentMaxValue += (int) (Math.random() * Settings.LISTS_MAX_VALUE);
             currentNode.val = currentMaxValue;
 
             currentNode.next = secondNode;

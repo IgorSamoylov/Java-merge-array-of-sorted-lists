@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 class SolutionTest {
     private static ListNode outputList;
-    private static final int numberLists = 32;
+    private static final int numberLists = 35;
     private ListNode[] TestArray = new ListNode[numberLists];
     private int totalNodes = 0;
 
@@ -27,7 +27,7 @@ class SolutionTest {
 
     @Test
     public void testMultithreading() {
-        tester(new SolutionMultithreading());
+        tester(new SolutionMultithread());
     }
 
     @Test
